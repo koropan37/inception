@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    ports:
+      - "443:443"
+    volumes:
+      # 証明書や設定ファイルの確認のため、一旦マウントしておくと便利ですが
+      # テスト段階では必須ではありません。
+      - ../srcs/requirements/nginx/conf/:/etc/nginx/conf.d/
+    restart: always
