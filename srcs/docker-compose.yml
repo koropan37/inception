@@ -24,7 +24,7 @@ services:
   wordpress:
     container_name: wordpress
     build: ./requirements/wordpress
-    image: wordpress
+    image: wordpress:inception
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -49,7 +49,7 @@ services:
   nginx:
     container_name: nginx
     build: ./requirements/nginx
-    image: nginx
+    image: nginx:inception
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
     ports:
