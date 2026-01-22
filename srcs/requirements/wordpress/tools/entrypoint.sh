@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Secretsから読み込み
+MYSQL_PASSWORD=$(cat /run/secrets/db_password)
+WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
+WP_PASSWORD=$(cat /run/secrets/wp_user_password)
+
 # 環境変数チェック
 test -n "$MYSQL_DATABASE"
 test -n "$MYSQL_USER"
@@ -22,6 +27,10 @@ done
 echo "MariaDB is ready!"
 
 cd /var/www/wordpress
+
+# パーミッション設定
+chown -R www-data:www-data /var/www/wordpress
+chmod -R 755 /var/www/wordpress
 
 # 1. まずWordPressをダウンロード（まだない場合）
 if [ ! -f wp-config.php ]; then
@@ -69,6 +78,9 @@ if ! wp user get "${WP_USER}" --field=ID --allow-root 2>/dev/null; then
 else
     echo "User ${WP_USER} already exists."
 fi
+
+# 再度パーミッション設定
+chown -R www-data:www-data /var/www/wordpress
 
 echo "Starting PHP-FPM..."
 exec php-fpm8.2 -F

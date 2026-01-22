@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Secretsから読み込み
+MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
+MYSQL_PASSWORD=$(cat /run/secrets/db_password)
+
 # 環境変数の検証
 test -n "$MYSQL_DATABASE"
 test -n "$MYSQL_USER"
