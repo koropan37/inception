@@ -23,10 +23,11 @@ COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 
 # エントリーポイントスクリプトをコピー
 COPY tools/entrypoint.sh /entrypoint.sh
+COPY tools/healthcheck.sh /usr/local/bin/healthcheck.sh
 RUN chmod +x /entrypoint.sh
 
 # WordPress用のディレクトリを作成
-RUN mkdir -p /var/www/wordpress
+RUN mkdir -p /var/www/wordpress /var/run/php
 RUN chown -R www-data:www-data /var/www/wordpress
 
 WORKDIR /var/www/wordpress
