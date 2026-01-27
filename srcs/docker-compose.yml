@@ -4,7 +4,7 @@ services:
   mariadb:
     container_name: mariadb
     build: ./requirements/mariadb
-    image: mariadb:10.5
+    image: mariadb
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
@@ -25,7 +25,7 @@ services:
   wordpress:
     container_name: wordpress
     build: ./requirements/wordpress
-    image: wordpress:inception
+    image: wordpress
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -51,7 +51,7 @@ services:
   nginx:
     container_name: nginx
     build: ./requirements/nginx
-    image: nginx:inception
+    image: nginx
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
     ports:
@@ -63,6 +63,18 @@ services:
     restart: always
     depends_on:
       - wordpress
+      
+  adminer:
+    container_name: adminer
+    build: requirements/bonus/adminer
+    image: adminer
+    restart: always
+    ports:
+      - "8081:8080"  
+    networks:
+      - inception    
+    depends_on:
+      - mariadb      
 
 networks:
   inception:
