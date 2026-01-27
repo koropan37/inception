@@ -1,7 +1,7 @@
 FROM debian:bookworm
 
 # PHP-FPM と必要な拡張機能をインストール
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y procps \
     php8.2-fpm \
     php8.2-mysql \
     php8.2-curl \
@@ -24,7 +24,7 @@ COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 # エントリーポイントスクリプトをコピー
 COPY tools/entrypoint.sh /entrypoint.sh
 COPY tools/healthcheck.sh /usr/local/bin/healthcheck.sh
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh /usr/local/bin/healthcheck.sh
 
 # WordPress用のディレクトリを作成
 RUN mkdir -p /var/www/wordpress /var/run/php
