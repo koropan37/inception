@@ -25,11 +25,10 @@ ps:
 
 clean: down
 	@echo "Cleaning containers and images..."
-	@docker compose -f $(COMPOSE_FILE) down --rmi local --remove-orphans
+	@docker compose -f $(COMPOSE_FILE) down -v --rmi local --remove-orphans
 
 fclean: clean
 	@echo "Removing volumes..."
-	@docker compose -f $(COMPOSE_FILE) down -v
 	@sudo rm -rf $(VOLUME_DIR)
 
 re: fclean all
