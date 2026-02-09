@@ -1,7 +1,7 @@
 COMPOSE_FILE := ./srcs/docker-compose.yml
 VOLUME_DIR := ~/data
 
-.PHONY: all build up down logs ps clean fclean re
+.PHONY: all build up down restart logs ps clean fclean re
 
 all: build up
 
@@ -16,6 +16,10 @@ up: $(VOLUME_DIR)
 down:
 	@echo "Stopping containers..."
 	@docker compose -f $(COMPOSE_FILE) down
+
+restart:
+	@echo "Restarting containers..."
+	@docker compose -f $(COMPOSE_FILE) restart
 
 logs:
 	@docker compose -f $(COMPOSE_FILE) logs -f
