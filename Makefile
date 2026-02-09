@@ -28,7 +28,7 @@ ps:
 
 clean: down
 	@echo "Cleaning containers and images..."
-	@docker system prune -af
+	@docker compose -f $(COMPOSE_FILE) down --rmi local --remove-orphans
 
 fclean: clean
 	@echo "Removing volumes..."
