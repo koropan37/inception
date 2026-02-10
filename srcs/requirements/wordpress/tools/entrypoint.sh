@@ -9,7 +9,7 @@ read_secret() {
         cat "${secret_file}"
     else
         echo "ERROR: secret '$1' not found" >&2
-        echo ""
+        exit 1
     fi
 }
 
@@ -17,18 +17,18 @@ MYSQL_PASSWORD=$(read_secret "db_password")
 WP_ADMIN_PASSWORD=$(read_secret "wp_admin_password")
 WP_USER_PASSWORD=$(read_secret "wp_user_password")
 
-test -n "$MYSQL_PASSWORD" || { echo "ERROR: db_password required" >&2; exit 1; }
-test -n "$WP_ADMIN_PASSWORD" || { echo "ERROR: wp_admin_password required" >&2; exit 1; }
-test -n "$WP_USER_PASSWORD" || { echo "ERROR: wp_user_password required" >&2; exit 1; }
-test -n "$MYSQL_DATABASE" || { echo "ERROR: MYSQL_DATABASE required" >&2; exit 1; }
-test -n "$MYSQL_USER" || { echo "ERROR: MYSQL_USER required" >&2; exit 1; }
-test -n "$MYSQL_HOST" || { echo "ERROR: MYSQL_HOST required" >&2; exit 1; }
-test -n "$DOMAIN_NAME" || { echo "ERROR: DOMAIN_NAME required" >&2; exit 1; }
-test -n "$WP_ADMIN_USER" || { echo "ERROR: WP_ADMIN_USER required" >&2; exit 1; }
-test -n "$WP_ADMIN_EMAIL" || { echo "ERROR: WP_ADMIN_EMAIL required" >&2; exit 1; }
-test -n "$WP_USER" || { echo "ERROR: WP_USER required" >&2; exit 1; }
-test -n "$WP_USER_EMAIL" || { echo "ERROR: WP_USER_EMAIL required" >&2; exit 1; }
-test -n "$WP_TITLE" || { echo "ERROR: WP_TITLE required" >&2; exit 1; }
+test -n "$MYSQL_PASSWORD"
+test -n "$WP_ADMIN_PASSWORD"
+test -n "$WP_USER_PASSWORD"
+test -n "$MYSQL_DATABASE"
+test -n "$MYSQL_USER"
+test -n "$MYSQL_HOST"
+test -n "$DOMAIN_NAME"
+test -n "$WP_ADMIN_USER"
+test -n "$WP_ADMIN_EMAIL"
+test -n "$WP_USER"
+test -n "$WP_USER_EMAIL"
+test -n "$WP_TITLE"
 
 echo "[1/5] ✓ Configuration loaded"
 

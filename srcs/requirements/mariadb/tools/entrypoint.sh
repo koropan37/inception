@@ -18,7 +18,7 @@ if [ ! -f "/var/lib/mysql/.initialized" ]; then
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
     
     # --bootstrap で設定（一時起動不要）
-    mysqld --user=mysql --bootstrap <<-EOSQL
+mysqld --user=mysql --bootstrap <<-EOSQL
         USE mysql;
         FLUSH PRIVILEGES;
         
@@ -34,7 +34,7 @@ if [ ! -f "/var/lib/mysql/.initialized" ]; then
         GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
         
         FLUSH PRIVILEGES;
-    EOSQL
+EOSQL
     
     touch /var/lib/mysql/.initialized
     echo "MariaDB initialized successfully"
