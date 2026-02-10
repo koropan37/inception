@@ -50,18 +50,7 @@ done
 
 echo "[2/5] ✓ MariaDB ready"
 
-RETRY_COUNT=0
-
-until redis-cli -h redis ping 2>/dev/null | grep -q "PONG"; do
-    RETRY_COUNT=$((RETRY_COUNT + 1))
-    if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
-        echo "ERROR: Redis timeout" >&2
-        exit 1
-    fi
-    sleep 2
-done
-
-echo "[2/5] ✓ Redis ready"
+cd /var/www/wordpress
 
 echo "[3/5] Checking WordPress..."
 
@@ -103,22 +92,15 @@ else
         --allow-root
     echo "  ✓ User created"
     
-    echo "  Configuring Redis..."
-    wp config set WP_REDIS_HOST "redis" --allow-root
-    wp config set WP_REDIS_PORT "6379" --raw --allow-root
-    wp config set WP_CACHE "true" --raw --allow-root
-    wp plugin install redis-cache --activate --allow-root
-    wp redis enable --allow-root
-    echo "  ✓ Redis configured"
-    
     echo "[4/5] ✓ Installation complete"
 fi
 
 echo "[5/5] Setting permissions..."
-chown -R www-data:www-data /var/www/html
-chmod -R 755 /var/www/html
+chown -R www-data:www-data /var/www/wordpress
+chmod -R 755 /var/www/wordpress
 echo "[5/5] ✓ Permissions set"
 
 unset MYSQL_PASSWORD WP_ADMIN_PASSWORD WP_USER_PASSWORD
 
+echo "Starting PHP-FPM..."
 exec php-fpm8.2 -F

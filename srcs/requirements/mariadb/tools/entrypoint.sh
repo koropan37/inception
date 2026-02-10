@@ -12,42 +12,34 @@ test -n "$MYSQL_ROOT_PASSWORD"
 mkdir -p /var/run/mysqld
 chown -R mysql:mysql /var/run/mysqld
 
-if [ ! -d "/var/lib/mysql/mysql" ]; then
+if [ ! -f "/var/lib/mysql/.initialized" ]; then
+    echo "Initializing MariaDB..."
+    
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
-
-    # Socket指定で起動
-    mysqld --user=mysql \
-           --skip-networking \
-           --socket=/var/run/mysqld/mysqld.sock &
-    pid="$!"
-
-    # 起動待機（タイムアウト付き）
-    for i in {30..0}; do
-        if mysqladmin \
-            --socket=/var/run/mysqld/mysqld.sock \
-            ping > /dev/null 2>&1; then
-            break
-        fi
-        sleep 1
-    done
-
-    if [ "$i" = "0" ]; then
-        echo "ERROR: MariaDB did not start"
-        exit 1
-    fi
-
-    # SQLファイルを使用
-    envsubst < /usr/local/etc/mariadb/init.sql | \
-        mysql --user=root --socket=/var/run/mysqld/mysqld.sock
-
-    # 正常シャットダウン
-    mysqladmin \
-        --user=root \
-        --password="${MYSQL_ROOT_PASSWORD}" \
-        --socket=/var/run/mysqld/mysqld.sock \
-        shutdown
-
-    wait "$pid" || true
+    
+    # --bootstrap で設定（一時起動不要）
+    mysqld --user=mysql --bootstrap <<-EOSQL
+        USE mysql;
+        FLUSH PRIVILEGES;
+        
+        ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
+        
+        DELETE FROM mysql.user WHERE User='';
+        DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+        
+        DROP DATABASE IF EXISTS test;
+        
+        CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
+        CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+        GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
+        
+        FLUSH PRIVILEGES;
+    EOSQL
+    
+    touch /var/lib/mysql/.initialized
+    echo "MariaDB initialized successfully"
+else
+    echo "MariaDB already initialized"
 fi
 
-exec mysqld --user=mysql --console
+exec mysqld --user=mysql --bind-address=0.0.0.0
