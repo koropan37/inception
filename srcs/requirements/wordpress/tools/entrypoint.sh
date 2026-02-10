@@ -87,7 +87,7 @@ else
     wp user create \
         "${WP_USER}" \
         "${WP_USER_EMAIL}" \
-        --role=editor \
+        --role=subscriber \
         --user_pass="${WP_USER_PASSWORD}" \
         --allow-root
     echo "  ✓ User created"
